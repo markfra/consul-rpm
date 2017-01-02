@@ -4,6 +4,7 @@ MAINTAINER Sebastien Le Digabel "sledigabel@gmail.com"
 
 RUN yum update -y
 RUN yum install -y rpmdevtools mock
+RUN if [ -f /etc/rpm/macros.dist ]; then sed -i 's,\(el[0-9]\).centos,\1,' /etc/rpm/macros.dist; fi
 
 RUN cd /root && rpmdev-setuptree
 ADD SOURCES/* /root/rpmbuild/SOURCES/

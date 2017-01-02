@@ -1,0 +1,18 @@
+# default build is for CentOS7, change the base image to fit your build.
+FROM centos:centos5
+MAINTAINER Sebastien Le Digabel "sledigabel@gmail.com"
+
+RUN yum update -y
+RUN if [ -f /etc/rpm/macros.dist ]; then sed -i 's,\(el[0-9]\).centos,\1,' /etc/rpm/macros.dist; fi
+RUN echo "check_certificate = off" >> ~/.wgetrc
+RUN yum install -y mock wget
+RUN if [ -f /usr/lib/rpm/macros ]; then sed -i 's,%{_usrsrc}/redhat,/root/rpmbuild,' /usr/lib/rpm/macros; echo "%dist .el5" >> /usr/lib/rpm/macros; fi
+
+RUN mkdir -p /root/rpmbuild/BUILD
+COPY SOURCES/* /root/rpmbuild/SOURCES/
+COPY SPECS/* /root/rpmbuild/SPECS/
+RUN ln -s /root/rpmbuild/RPMS /RPMS
+
+VOLUME ["/RPMS"]
+
+CMD set -x && cd /root && wget -O epel.repo https://dl.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm && rpm -ivh epel.repo && yum -y install spectool && spectool -g -R rpmbuild/SPECS/consul.spec && rpmbuild -bb rpmbuild/SPECS/consul.el5.spec

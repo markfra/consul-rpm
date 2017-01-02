@@ -21,6 +21,7 @@ Source5:        %{name}.json
 Source6:        %{name}-ui.json
 Source7:        %{name}.logrotate
 BuildRoot:      %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+BuildArch:      x86_64
 
 %if 0%{?fedora} >= 14 || 0%{?rhel} >= 7
 BuildRequires:  systemd-units
